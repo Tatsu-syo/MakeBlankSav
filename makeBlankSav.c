@@ -20,6 +20,43 @@ void usage(void)
 }
 
 /**
+ * @brief Set boot sector infomation.
+ *
+ * @param sec 512 bytes buffer for boot sector information
+ *
+ * This function writes FAT12 format floppy disk information.
+ */
+void makeBootSector(unsigned char *sec)
+{
+	/* Sector size */
+	sec[0x0b] = 0;
+	sec[0x0c] = 2;
+	/* Cluster size */
+	sec[0x0d] = 2;
+	/* First FAT secxtor no. */
+	sec[0x0e] = 1;
+	/* Copies of FAT */
+	sec[0x10] = 2;
+	/* Root directory entries */
+	sec[0x11] = 112;
+	/* Total sectors */
+	sec[0x13] = 0xa0;
+	sec[0x14] = 0x05;
+	 /* Media descriptor */
+	sec[0x15] = 0xf9;
+	/* Sectors per FAT */
+	sec[0x16] = 3;
+	/* Sectors per track */
+	sec[0x18] = 9;
+	/* Disk surcaces */
+	sec[0x1a] = 2;
+
+	/* Boot signature */
+	sec[0x1fe] = 0x55; 
+	sec[0x1ff] = 0xaa;
+}
+
+/**
  * Create blank MSX PLAYer SAV
  *
  * @param argc Argument count
@@ -59,14 +96,32 @@ int makeBlankSav(char *savFile)
 
 		/* MSX PLAYer don't recognize boot sector */
 		/* So, we only need to create FAT ID.  */
+		switch (i) {
+			case 0:
+				/* Boot sector */
+				makeBootSector(sec);
+				break;
+			case 1:
+			case 4:
+				/* FAT12 */
+				/* FAT(Primary and copy) */
+				/* FAT12 FAT ID */
+				sec[0] = 0xf8;
+				/* Dummy */
+				sec[1] = 0xff;
+				/* Dummy */
+				sec[2] = 0xff;
+				break;
+			case 2:
+			case 3:
+				/* Root directory */
+				sec[0x00] = 0x00; /* No files */
+				break;
+			default:
+				/* Data area */
+			break;
+		}
 		if ((i == 1) || (i == 4)) {
-			/* FAT(Primary and copy) */
-			/* FAT12 FAT ID */
-			sec[0] = 0xf8;
-			/* Dummy */
-			sec[1] = 0xff;
-			/* Dummy */
-			sec[2] = 0xff;
 		}
 
 		fwrite(sec, SECTORSIZE, 1, fpo);
