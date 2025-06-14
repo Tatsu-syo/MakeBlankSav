@@ -14,7 +14,7 @@ The sources for SAVList are distributed under the MIT open source license
  */
 void usage(void)
 {
-	fprintf(stderr,"MakeBlankSav Version 1.00 By Tatsuhiko Syoji(Tatsu) 2025\n\n");
+	fprintf(stderr,"MakeBlankSav Version 1.0.0 By Tatsuhiko Syoji(Tatsu) 2025\n\n");
 	fprintf(stderr,"Usage:MakeBlankSav msxPlayer_sav_file\n");
 	exit(1);
 }
