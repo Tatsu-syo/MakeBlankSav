@@ -112,18 +112,11 @@ int makeBlankSav(char *savFile)
 				/* Dummy */
 				sec[2] = 0xff;
 				break;
-			case 2:
-			case 3:
-				/* Root directory */
-				sec[0x00] = 0x00; /* No files */
-				break;
 			default:
-				/* Data area */
-			break;
+				break;
 		}
-		if ((i == 1) || (i == 4)) {
-		}
-
+		
+		/* Write sector contents */
 		fwrite(sec, SECTORSIZE, 1, fpo);
 		if (ioCount < 1){
 			fprintf(stderr,"Write error.\n");
